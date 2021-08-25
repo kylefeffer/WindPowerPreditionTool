@@ -1,0 +1,140 @@
+<! DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+            integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+            crossorigin="" />
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.2/css/bulma.min.css">
+        <link rel="stylesheet" href="{{ url_for('static', filename = 'app.css') }}">
+        </link>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+        <script>window.jQuery || document.write('<script src="{{url_for('static', filename='jquery.js') }}">\x3C/script>')</script>
+        <script>
+            $SCRIPT_ROOT = {{ request.script_root|tojson }};
+        </script>
+        <title>Wind Power Prediction Tool</title>
+    </head>
+
+    <body>
+        <section class="section">
+        <h1 class="title is-4">Wind Power Prediction Tool (click map to start)</h1>
+        <div class="notification is-danger" id="errorMessage" hidden>
+            <button class="delete" id="dismissError"></button>
+            Please click on the map to set lat/long!
+          </div>
+        <div class="field is-horizontal">
+            <div class="field-body">
+                <div class="field">
+                    <p class="control is-expanded">
+                        <input class="input" type="text" placeholder="Latitude" id="latitude" name=latitude>
+                    </p>
+                </div>
+                <div class="field">
+                    <p class="control is-expanded">
+                        <input class="input" type="text" placeholder="Longitude" id="longitude" name=longitude>
+                    </p>
+                </div>
+
+                <div class="field">
+                    <div class="select">
+                        <select class="input" type="text" id="turbType" name=turbType>
+                            <option value="">Select Turbine Type</option>
+                            <option value="E-101/3050">Enercon-101/3050</option>
+                            <option value="E-101/3500">Enercon-101/3500</option>
+                            <option value="E-115/3000">Enercon-115/3000</option>
+                            <option value="E-115/3200">Enercon-115/3200</option>
+                            <option value='E-126/4200'>E-126/4200</option>
+                            <option value="E-141/4200">Enercon-141/4200</option>
+                            <option value="E-53/800">Enercon-53/800</option>
+                            <option value="E-70/2300">Enercon-70/2300</option>
+                            <option value="E-82/2000">Enercon-82/2000</option>
+                            <option value="E-82/2300">Enercon-82/2300</option>
+                            <option value="E-82/2350">Enercon-82/2350</option>
+                            <option value="E-82/3000">Enercon-82/3000</option>
+                            <option value="E-92/2350">Enercon-92/2350</option>
+                            <option value="E48/800">Enercon48/800</option>
+                            <option value="ENO100/2200">Eno-100/2200</option>
+                            <option value="ENO114/3500">Eno-114/3500</option>
+                            <option value="ENO126/3500">Eno-126/3500</option>
+                            <option value="GE103/2750">GE-103/2750</option>
+                            <option value="GE120/2500">GE-120/2500</option>
+                            <option value="GE120/2750">GE-120/2750</option>
+                            <option value="GE130/3200">GE-130/3200</option>
+                            <option value="N100/2500">Nordex-100/2500</option>
+                            <option value="N117/2400">Nordex-117/2400</option>
+                            <option value="N131/3000">Nordex-131/3000</option>
+                            <option value="N131/3300">Nordex-131/3300</option>
+                            <option value="N131/3600">Nordex-131/3600</option>
+                            <option value="N90/2500"> Nordex-90/2500</option>
+                            <option value="MM100/2000">Senvion/REpower-MM100/2000</option>
+                            <option value="S114/3400">Senvion/REpower-S114/3400</option>
+                            <option value="S122/3000">Senvion/REpower-S122/3000</option>
+                            <option value="S122/3200">Senvion/REpower-S122/3200</option>
+                            <option value="SWT113/2300">Siemens-113/2300</option>
+                            <option value="SWT113/3200">Siemens-113/3200</option>
+                            <option value="SWT120/3600">Siemens-120/3600</option>
+                            <option value="SWT130/3300">Siemens-130/3300</option>
+                            <option value="SWT130/3600">Siemens-130/3600</option>
+                            <option value="SWT142/3150">Siemens-142/3150</option>
+                            <option value="V100/1800">Vestas-100/1800</option>
+                            <option value="V100/1800/GS">Vestas-100/1800/GS</option>
+                            <option value="V112/3000">Vestas-112/3000</option>
+                            <option value="V112/3075">Vestas-112/3075</option>
+                            <option value="V112/3300">Vestas-112/3300</option>
+                            <option value="V112/3450">Vestas-112/3450</option>
+                            <option value="V117/3300">Vestas-117/3300</option>
+                            <option value="V117/3450">Vestas-117/3450</option>
+                            <option value="V117/3600">Vestas-117/3600</option>
+                            <option value="V126/3000">Vestas-126/3000</option>
+                            <option value="V126/3300">Vestas-126/3300</option>
+                            <option value="V126/3450">Vestas-126/3450</option>
+                            <option value="V90/2000">Vestas-90/2000</option>
+                            <option value="V90/2000/GS">Vestas-90/2000/GS</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <p class="control is-expanded">
+                        <input class="input" type="text" placeholder="Hub Height (m)" id="hubHeight" name=hubHeight>
+                    </p>
+                </div>
+
+                <div class="field">
+                    <div class="control">
+                        <a href=# class="button is-primary" id="calculateTurb">
+                            Calculate
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="mapid"></div>
+        <div padding-top=16px>Please select a point within Dade County Wisconsin. Once a point has been selected, choose a turbine type and input a hub height. Once all variables are selected, push the green "Calculate" button. The results of your expected turbine power generation will open automatically in a new tab. Running the model may take up to 30 seconds.</div>
+    </section>
+        <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+            integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+            crossorigin=""></script>
+        <script type="text/javascript" src="{{ url_for('static', filename = 'app.js') }}"></script>
+        <script>
+          $(function() {
+            $('a#calculateTurb').bind('click', function() {
+                var e = document.getElementById("turbType");
+                var turbVal = e.value
+                console.log(turbVal)
+              $.getJSON($SCRIPT_ROOT + '/_turbines', {
+                latitude: $('input[name="latitude"]').val(),
+                longitude: $('input[name="longitude"]').val(),
+                turb: turbVal,
+                hubHeight: $('input[name="hubHeight"]').val()
+              }, function(data) {
+                $("#result").text(data.result);
+              });
+              return false;
+            });
+          });
+        </script>
+    </body>
+</html>
